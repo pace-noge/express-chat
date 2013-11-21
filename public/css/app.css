@@ -1,18 +1,13 @@
+body {
+    padding-top: 50px;
+}
 #chat {
     height: 500px;
+    overflow-y:auto
 }
 
 #contentWrap {
     display: none;
-}
-
-#chatWrap {
-    float: left;
-    border: 1px solid #000;
-}
-
-.msgError {
-    color: red;
 }
 
 .whisper {

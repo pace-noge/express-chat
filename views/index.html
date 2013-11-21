@@ -1,33 +1,67 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Chat with node express and socket io</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css"></link>
     <link rel="stylesheet" href="css/app.css"></link>
 </head>
 <body>
+  <div class="container">
     <div id="nickWrap">
-        <p>Enter a Username:</p>
-        <p id="nickError"></p>
-        <form id="setNick">
-            <input size="35" type="text" id="nickname"></input>
-            <button type"submit">Set</button>
+      <p><label class="label label-danger" id="nickError"></label><p>
+        <form id="setNick" class="form-inline">
+          <div class="form-group">
+             <label for="nickname" class="sr-only">Enter a Username:</label>
+            <input size="35" type="text" id="nickname" class="form-control" placeholder="Enter a nickname"> </input>
+          </div>
+            <button type="submit" class="btn btn-primary">Set</button>
         </form>
     </div>
 
-<div id="contentWrap">
-    <div id="chatWrap">
-       <div id="chat"></div>
-           <form id="send-message">
-              <input size="35" id="message"></input>
-              <button type="submit">Send</button>
+<div id="contentWrap" class="row">
+    <div id="chatWrap" class="col-xs-8 col-md-6">
+      <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Simple Chat</h3>
+      </div>
+      <div class="panel-body">
+        <div class="clearfix">
+            <div id="chat"></div>
+          </div>
+        </div>
+          <div class="panel-footer">
+           <form id="send-message" class="form-inline">
+              <div class="form-group">
+                <input size="50%" id="message" class="form-control"></input>
+            </div>
+             <button type="submit" class="btn btn-primary">Send</button>
            </form>
-      </div>
-      <div id="users">
-      </div>
-</div>
+        </div> <!-- panel footer -->
 
+
+         </div>
+      </div>
+      <div  class="col-x4 col-md-2">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            Online User
+            <span class="badge pull-right">
+              <div id="ttlUser"></div>
+            </span>
+            </h3>
+        </div>
+        <div class="panel-body">
+          <div id="users"></div>
+        </div>
+      </div>
+    </div>
+
+</div> <!-- container -->
 <script src="js/jquery.js"></script>
+<script src="js/bootstrap.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
   jQuery(function($) {
@@ -39,6 +73,7 @@
      var $nick = $('#nickname');
      var $nickError = $('#nickError');
      var $users = $('#users');
+     var $ttluser = $('#ttlUser');
 
      $nickForm.submit(function(e) {
         e.preventDefault();
@@ -56,20 +91,24 @@
         e.preventDefault();
         socket.emit('send message', $message.val(), function(data) {
           //add stuff later
-          $chat.append('<span class="msgError"><b>' + data + '</span><br />');
+          $chat.append('<span class="label label-danger">' + data + '</span>');
         });
         $message.val('');
      });
 
      socket.on('username', function(data) {
-        var html = "";
-        for(i=0; i < data.length; i++) {
-            html += data[i] + '<br />';
+        var html = "<ul>";
+        for(i=1; i < data.length; i++) {
+            html += '<li>' + data[i] + '</li>';
         }
+        html += '</ul>';
         $users.html(html);
+        $ttluser.html(data.length-1);
      });
 
      socket.on('new message', function(data) {
+        $chat.animate({ scrollTop: $chat.get(0).scrollHeight
+}, 1500);
         $chat.append('<span class="msg"><b>' + data.user + ': </b>' + data.msg + '</span><br />');
      });
 

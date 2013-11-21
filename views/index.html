@@ -77,7 +77,8 @@
 
      $nickForm.submit(function(e) {
         e.preventDefault();
-        socket.emit('new user', $nick.val(), function(data) {
+        var $nickname = strip($nick.val());
+        socket.emit('new user', $nickname, function(data) {
             if(data) {
                $('#nickWrap').hide();
                $('#contentWrap').show();
@@ -89,7 +90,8 @@
 
      $messageForm.submit(function(e) {
         e.preventDefault();
-        socket.emit('send message', $message.val(), function(data) {
+        var msg = strip($message.val());
+        socket.emit('send message', msg, function(data) {
           //add stuff later
           $chat.append('<span class="label label-danger">' + data + '</span>');
         });
@@ -98,12 +100,12 @@
 
      socket.on('username', function(data) {
         var html = "<ul>";
-        for(i=1; i < data.length; i++) {
+        for(i=0; i < data.length; i++) {
             html += '<li>' + data[i] + '</li>';
         }
         html += '</ul>';
         $users.html(html);
-        $ttluser.html(data.length-1);
+        $ttluser.html(data.length);
      });
 
      socket.on('new message', function(data) {
@@ -115,6 +117,20 @@
      socket.on('whisper', function(data) {
         $chat.append('<span class="whisper"><b>' + data.user + ': </b>' + data.msg + '</span><br />');
      });
+
+
+/**
+ * strip tags
+*
+*
+*/
+
+  function strip(html)
+  {
+    var tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText;
+  }
 
   });
 </script>
